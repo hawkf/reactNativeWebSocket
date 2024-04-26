@@ -5,7 +5,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -31,6 +31,29 @@ type SectionProps = PropsWithChildren<{
 
 function Section({children, title}: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  useEffect(() => {
+    const ws = new WebSocket('ws://192.168.88.180:8080');
+
+    ws.onopen = () => {
+      console.log('Connected to WebSocket server');
+    };
+
+    ws.onmessage = e => {
+      console.log('Received message:', e.data);
+    };
+
+    ws.onerror = error => {
+      console.error(`WebSocket error: ${error}`);
+    };
+
+    ws.onclose = () => {
+      console.log('Disconnected from WebSocket server');
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
   return (
     <View style={styles.sectionContainer}>
       <Text
